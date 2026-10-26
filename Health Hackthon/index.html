@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodBridge 2.0 — Predictive, Stock-First Blood Coordination & Smart Matching Network</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #070d18;
+      --bg-card: rgba(13, 23, 42, 0.78);
+      --bg-card-hover: rgba(20, 35, 64, 0.95);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(0, 210, 211, 0.25);
+      --primary-red: #ff3366;
+      --red-glow: rgba(255, 51, 102, 0.35);
+      --accent-teal: #00d2d3;
+      --teal-glow: rgba(0, 210, 211, 0.3);
+      --hospital-blue: #3b82f6;
+      --success-green: #10b981;
+      --warning-amber: #f59e0b;
+      --purple-rare: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(255, 51, 102, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(0, 210, 211, 0.07) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
+    }
+
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #070d18; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    /* Top Navigation Bar */
+    .navbar {
+      height: 74px;
+      background: rgba(7, 13, 24, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #ff3366, #c9184a);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      box-shadow: 0 0 20px var(--red-glow);
+    }
+
+    .brand-text h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 21px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text h1 span {
+      background: linear-gradient(90deg, #ff3366, #00d2d3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .version-chip {
+      font-size: 10.5px;
+      font-weight: 700;
+      background: rgba(0, 210, 211, 0.12);
+      color: var(--accent-teal);
+      border: 1px solid rgba(0, 210, 211, 0.25);
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(13, 23, 42, 0.7);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-btn {
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-btn.active {
+      background: rgba(255, 51, 102, 0.18);
+      border: 1px solid rgba(255, 51, 102, 0.35);
+      color: #ff3366;
+      box-shadow: 0 0 15px rgba(255, 51, 102, 0.2);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-demo-walkthrough {
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-demo-walkthrough:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-create-req {
+      background: linear-gradient(135deg, #ff3366, #e62050);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 15px var(--red-glow);
+      transition: all 0.25s ease;
+    }
+
+    .btn-create-req:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 51, 102, 0.6);
+    }
+
+    /* Top Strip: Stock First Pipeline Banner */
+    .pipeline-strip {
+      background: rgba(13, 23, 42, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12.5px;
+    }
+
+    .pipeline-steps {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pipe-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .pipe-step.active {
+      border-color: var(--accent-teal);
+      color: #fff;
+      background: rgba(0, 210, 211, 0.1);
+    }
+
+    .pipe-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-teal);
+      color: #070d18;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .eraktkosh-sync-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #10b981;
+      font-weight: 600;
+      font-size: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    /* Main Container */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab-content {
+      display: none;
+      flex: 1;
+    }
+
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* Common Card Styles */
+    .glass-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      backdrop-filter: blur(12px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-header h2, .panel-header h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 17.5px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* TAB 1: STOCK-FIRST & PREDICTIVE RADAR */
+    .dashboard-container {
+      padding: 26px 30px 40px;
+      max-width: 1540px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Predictive Shortage Alert Bar */
+    .forecaster-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(255, 51, 102, 0.08));
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: var(--radius-md);
+      padding: 16px 22px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .forecast-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .forecast-text {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* Dual Grid: Live Stock Layer & Requests */
+    .radar-dual-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 22px;
+    }
+
+    /* Component Inventory Cards */
+    .hospital-stock-card {
+      background: rgba(10, 18, 33, 0.9);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--hospital-blue);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .hosp-stock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .component-tags-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .comp-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .comp-name {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .comp-units {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      margin: 2px 0;
+    }
+
+    .comp-expiry {
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .expiry-warning { color: #f59e0b; }
+    .expiry-good { color: #10b981; }
+
+    .inter-transfer-btn {
+      background: rgba(0, 210, 211, 0.12);
+      border: 1px solid var(--accent-teal);
+      color: var(--accent-teal);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .inter-transfer-btn:hover {
+      background: var(--accent-teal);
+      color: #070d18;
+    }
+
+    /* Request Cards */
+    .req-card {
+      background: rgba(10, 18, 33, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .req-card.approved {
+      border-left: 4px solid var(--success-green);
+      background: rgba(16, 185, 129, 0.03);
+    }
+    .req-card.critical {
+      border-left: 4px solid var(--primary-red);
+    }
+
+    .badge-blood {
+      background: #ff3366;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .badge-status {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .badge-status.approved { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-status.critical { background: rgba(255, 51, 102, 0.2); color: #ff3366; border: 1px solid rgba(255, 51, 102, 0.3); }
+
+    /* TAB 2: SMART MATCHING & RARE REGISTRY */
+    .smart-matching-view {
+      padding: 26px 30px 40px;
+      max-width: 1540px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .donor-smart-item {
+      background: rgba(10, 18, 33, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .donor-smart-item.ineligible {
+      opacity: 0.6;
+      border-left: 4px solid #64748b;
+    }
+    .donor-smart-item.eligible {
+      border-left: 4px solid var(--success-green);
+    }
+
+    .score-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+    }
+
+    /* Rare Bombay Blood Group Banner */
+    .bombay-phenotype-box {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(99, 102, 241, 0.1));
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* TAB 3: STANDING PATIENTS (THALASSEMIA / ONCOLOGY) */
+    .standing-patient-view {
+      padding: 26px 30px 40px;
+      max-width: 1540px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .patient-circle-card {
+      background: rgba(10, 18, 33, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 280px 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .donor-circle-avatars {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .circle-avatar {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+    .circle-avatar.active-turn {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      color: #4ade80;
+    }
+
+    /* TAB 4: TRUST & HASH CHAIN AUDIT + DPDP */
+    .trust-view {
+      padding: 26px 30px 40px;
+      max-width: 1540px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+    }
+
+    .hash-block {
+      background: #060b14;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .hash-block::before {
+      content: '🔗 LINKED SHA-256 BLOCK';
+      font-size: 9px;
+      color: #64748b;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* QR Code Modal Box */
+    .qr-box-wrapper {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* WhatsApp Bot Simulator Modal */
+    .whatsapp-container {
+      background: #0b141a;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+      border: 1px solid #202c33;
+    }
+
+    .wa-header {
+      background: #202c33;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #e9edef;
+    }
+
+    .wa-chat-area {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 80%);
+    }
+
+    .wa-msg {
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .wa-msg.in {
+      background: #202c33;
+      color: #e9edef;
+      align-self: flex-start;
+      border-top-left-radius: 0;
+    }
+    .wa-msg.out {
+      background: #005c4b;
+      color: #e9edef;
+      align-self: flex-end;
+      border-top-right-radius: 0;
+    }
+
+    .wa-input-row {
+      background: #202c33;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .wa-input {
+      flex: 1;
+      background: #2a3942;
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    /* Common Buttons */
+    .btn-action {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-action:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-action.success { background: var(--success-green); border-color: var(--success-green); color: #fff; }
+    .btn-action.primary { background: var(--accent-teal); border-color: var(--accent-teal); color: #070d18; font-weight: 700; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #0c1524;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 580px;
+      padding: 26px;
+    }
+
+    @media (max-width: 1024px) {
+      .radar-dual-grid, .smart-matching-view, .trust-view { grid-template-columns: 1fr; }
+      .patient-circle-card { grid-template-columns: 1fr; }
+      .pipeline-strip { flex-direction: column; gap: 8px; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="brand-container">
+      <div class="brand-logo-icon">🩸</div>
+      <div class="brand-text">
+        <h1>Blood<span>Bridge 2.0</span></h1>
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+          <span class="version-chip">Predictive & Stock-First Layer</span>
+          <span style="font-size: 11.5px; color: var(--text-dim);">VITB – JHU Health Hack 2027</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-btn active" onclick="switchTab('stock-radar-tab')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        1. Stock & Inter-Hospital Transfer
+      </button>
+      <button class="nav-btn" onclick="switchTab('smart-match-tab')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        2. Smart Donor Matching
+      </button>
+      <button class="nav-btn" onclick="switchTab('standing-patients-tab')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+        3. Thalassemia Life Circles
+      </button>
+      <button class="nav-btn" onclick="switchTab('trust-security-tab')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        4. Hash-Chain Audit & DPDP
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="nav-actions">
+      <button class="btn-demo-walkthrough" onclick="start30SecHackathonDemo()">
+        ⚡ 30s Hackathon Demo Story
+      </button>
+      <button class="btn-action" style="border-color: #25d366; color: #25d366;" onclick="openWhatsAppModal()">
+        💬 WhatsApp Bot
+      </button>
+      <button class="btn-create-req" onclick="openNewRequestModal()">
+        + Emergency Request
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Stock-First Pipeline Strip -->
+  <div class="pipeline-strip">
+    <div class="pipeline-steps">
+      <span style="font-weight: 700; color: #fff; font-size: 11.5px; text-transform: uppercase;">BloodBridge Protocol:</span>
+      <div class="pipe-step active">
+        <span class="pipe-num">1</span>
+        <span>Check Component Stock</span>
+      </div>
+      <span style="color: var(--text-dim);">➔</span>
+      <div class="pipe-step active">
+        <span class="pipe-num">2</span>
+        <span>Inter-Hospital Transfer</span>
+      </div>
+      <span style="color: var(--text-dim);">➔</span>
+      <div class="pipe-step">
+        <span class="pipe-num">3</span>
+        <span>Smart Donor Alert (Only if Deficit)</span>
+      </div>
+    </div>
+
+    <div class="eraktkosh-sync-badge">
+      <span class="pulse-dot"></span>
+      <span>Synced with e-RaktKosh National Gateway (NIC)</span>
+    </div>
+  </div>
+
+  <main class="app-main">
+
+    <!-- ========================================================
+         VIEW 1: STOCK-FIRST LAYER & PREDICTIVE RADAR
+         ======================================================== -->
+    <div id="stock-radar-tab" class="tab-content active">
+      <div class="dashboard-container">
+        
+        <!-- Predictive Forecasting Intelligence Banner -->
+        <div class="forecaster-banner">
+          <div>
+            <div class="forecast-title">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              Predictive Shortage Warning (4-Day Forecast Window)
+            </div>
+            <div class="forecast-text">
+              <strong>Dengue Platelet Alert:</strong> Vector-borne surge detected in Sector 4. Platelet demand projected to exceed current reserves by <strong>240%</strong> in 72 hours.
+              <strong>Proactive Nudge:</strong> 12 pre-screened voluntary apheresis donors identified for proactive appointment scheduling before stock depletes to zero.
+            </div>
+          </div>
+          <div>
+            <button class="btn-action primary" onclick="triggerProactiveMobilization()">
+              ⚡ Proactively Mobilize Donors
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Dual Grid: Live Hospital Components vs Emergency Requests -->
+        <div class="radar-dual-grid">
+          
+          <!-- Column 1: Hospital Component Stock & Expiry Timeline -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <h2>
+                <svg width="18" height="18" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                Hospital Component Inventories & Expiry
+              </h2>
+              <span style="font-size: 11.5px; color: var(--text-muted);">Real-Time Component Sync</span>
+            </div>
+
+            <!-- Hospital 1 -->
+            <div class="hospital-stock-card">
+              <div class="hosp-stock-top">
+                <div>
+                  <strong style="color: #fff; font-size: 14.5px;">Apollo City Hospital & Transfusion Lab</strong>
+                  <div style="font-size: 12px; color: var(--text-muted);">1.2 km away • Trauma Center</div>
+                </div>
+                <button class="inter-transfer-btn" onclick="initiateHospitalTransfer('Apollo', 'Victoria', 'B+', 'Platelets')">
+                  ⇄ Inter-Hospital Surplus Transfer
+                </button>
+              </div>
+
+              <div class="component-tags-grid">
+                <div class="comp-box">
+                  <div class="comp-name">Whole Blood</div>
+                  <div class="comp-units">8 Units</div>
+                  <div class="comp-expiry expiry-good">Valid 22 days</div>
+                </div>
+                <div class="comp-box">
+                  <div class="comp-name">PRBC (Packed Cells)</div>
+                  <div class="comp-units">14 Units</div>
+                  <div class="comp-expiry expiry-good">Valid 31 days</div>
+                </div>
+                <div class="comp-box" style="border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.05);">
+                  <div class="comp-name" style="color: #f59e0b;">Platelets (RDP)</div>
+                  <div class="comp-units" style="color: #f59e0b;">3 Units</div>
+                  <div class="comp-expiry expiry-warning">⚠️ Expires in 38h!</div>
+                </div>
+                <div class="comp-box">
+                  <div class="comp-name">Plasma (FFP)</div>
+                  <div class="comp-units">19 Units</div>
+                  <div class="comp-expiry expiry-good">Stored @ -30°C</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hospital 2 -->
+            <div class="hospital-stock-card" style="border-left-color: #10b981;">
+              <div class="hosp-stock-top">
+                <div>
+                  <strong style="color: #fff; font-size: 14.5px;">Victoria Memorial Licensed Blood Bank</strong>
+                  <div style="font-size: 12px; color: var(--text-muted);">2.3 km away • Regional Government Surplus Hub</div>
+                </div>
+                <span style="font-size: 11px; color: #10b981; font-weight: 700; background: rgba(16,185,129,0.1); padding: 3px 8px; border-radius: 4px;">
+                  SURPLUS DETECTED
+                </span>
+              </div>
+
+              <div class="component-tags-grid">
+                <div class="comp-box">
+                  <div class="comp-name">Whole Blood</div>
+                  <div class="comp-units">24 Units</div>
+                  <div class="comp-expiry expiry-good">Optimal</div>
+                </div>
+                <div class="comp-box">
+                  <div class="comp-name">PRBC</div>
+                  <div class="comp-units">36 Units</div>
+                  <div class="comp-expiry expiry-good">Optimal</div>
+                </div>
+                <div class="comp-box">
+                  <div class="comp-name">Platelets (RDP)</div>
+                  <div class="comp-units" style="color: #10b981;">11 Units</div>
+                  <div class="comp-expiry expiry-good">Fresh Batch</div>
+                </div>
+                <div class="comp-box">
+                  <div class="comp-name">Plasma (FFP)</div>
+                  <div class="comp-units">42 Units</div>
+                  <div class="comp-expiry expiry-good">Optimal</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column 2: Emergency Requests & Approved Transfusions -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <h2>
+                <svg width="18" height="18" fill="none" stroke="#ff3366" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Active Coordination Requests
+              </h2>
+              <span style="font-size: 11.5px; color: var(--text-muted);">Tiered Fulfillment</span>
+            </div>
+
+            <div id="requestsListContainer">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW 2: SMART MATCHING ENGINE (NBTC ELIGIBILITY & BOMBAY)
+         ======================================================== -->
+    <div id="smart-match-tab" class="tab-content">
+      <div class="smart-matching-view">
+        
+        <!-- Smart Matching Criteria & Rare Phenotype -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h2>
+              <svg width="18" height="18" fill="none" stroke="#00d2d3" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Smart Matching Algorithm Guardrails
+            </h2>
+          </div>
+
+          <!-- Rare Blood Group Demo Banner -->
+          <div class="bombay-phenotype-box">
+            <div>
+              <div style="font-weight: 800; color: #d8b4fe; font-size: 14px; margin-bottom: 2px;">
+                🧬 Rare Blood Group Protocol: Bombay Phenotype (hh) & Rh-Null
+              </div>
+              <div style="font-size: 12px; color: #cbd5e1;">
+                Discovered in Mumbai. Lacks H antigen; compatible only with other hh donors (1 in 10,000 in India).
+              </div>
+            </div>
+            <button class="btn-action" style="background: #9333ea; color: #fff; border-color: #a855f7;" onclick="triggerRareBloodSearch()">
+              Trigger Cross-City Registry
+            </button>
+          </div>
+
+          <div style="background: rgba(0, 0, 0, 0.25); border-radius: 8px; padding: 14px; margin-bottom: 16px; font-size: 12.5px; color: #94a3b8; line-height: 1.6;">
+            <div>• <strong>NBTC Interval Guard:</strong> Male donors: 90 days min. interval | Female donors: 120 days. Platelet apheresis: 14 days.</div>
+            <div>• <strong>Real Traffic ETA:</strong> Computed via road transit congestion matrices instead of false straight-line radius.</div>
+            <div>• <strong>Reliability Index:</strong> Scored on historical show-up rates to reduce attendant waiting anxiety.</div>
+          </div>
+
+          <h4 style="font-size: 14px; color: #fff; margin-bottom: 10px;">Nearby Candidate Pool Simulation</h4>
+          <div id="smartDonorsContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- WhatsApp Front Door & Multilingual Simulator -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h2>
+              <svg width="18" height="18" fill="none" stroke="#25d366" stroke-width="2" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+              Accessibility: WhatsApp Family Front Door & IVR
+            </h2>
+            <span style="font-size: 11px; color: #25d366; font-weight: 700;">Zero-App Required</span>
+          </div>
+
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+            Patient families in shock don’t install new apps—they turn to WhatsApp. BloodBridge converts unorganized panic messages into verified structured hospital requests in seconds.
+          </p>
+
+          <div class="whatsapp-container">
+            <div class="wa-header">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #00a884; display: flex; align-items: center; justify-content: center; font-weight: 800;">BB</div>
+              <div>
+                <strong style="font-size: 13.5px;">BloodBridge AI Triage Bot</strong>
+                <div style="font-size: 11px; color: #8696a0;">Official WhatsApp Emergency Desk • Verified</div>
+              </div>
+            </div>
+
+            <div class="wa-chat-area" id="waChatBody">
+              <div class="wa-msg in">
+                Namaste! Send patient blood requirement details in Hindi, Marathi, Tamil, or English, or paste hospital request paper.
+              </div>
+              <div class="wa-msg out">
+                Need urgent 2 units of O- at Apollo City Hospital for emergency surgery. Patient attendant: Rajesh (+91 94210 55120)
+              </div>
+              <div class="wa-msg in">
+                ✅ <strong>Request Parsed & Validated:</strong><br>
+                • Blood: <strong>O-Negative</strong> (2 Units)<br>
+                • Hospital: Apollo City Hospital (Trauma Ward)<br>
+                • Urgency: Critical (&lt; 2 hrs)<br>
+                • e-RaktKosh Sync: Initialized<br><br>
+                Checking nearby hospital component surplus first...
+              </div>
+            </div>
+
+            <div class="wa-input-row">
+              <input type="text" class="wa-input" id="waUserMsg" placeholder="Type emergency message or test prompt..." onkeydown="if(event.key==='Enter') sendWhatsAppTestMsg()">
+              <button class="btn-action primary" onclick="sendWhatsAppTestMsg()">Send</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW 3: STANDING PATIENTS (THALASSEMIA & ONCOLOGY)
+         ======================================================== -->
+    <div id="standing-patients-tab" class="tab-content">
+      <div class="standing-patient-view">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div>
+              <h2>
+                <svg width="18" height="18" fill="none" stroke="#ff3366" stroke-width="2" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                Thalassemia & Oncology Standing-Patient Module
+              </h2>
+              <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                100,000+ Indian patients with Thalassemia Major require scheduled transfusions every 15–21 days. BloodBridge pre-matches them with trusted donor circles weeks in advance.
+              </p>
+            </div>
+            <button class="btn-action primary" onclick="alert('New chronic standing circle created and synced with clinical transfusion scheduler.')">
+              + Register Standing Patient
+            </button>
+          </div>
+
+          <!-- Standing Patient 1 -->
+          <div class="patient-circle-card">
+            <div>
+              <span class="badge-blood">B+</span>
+              <strong style="font-size: 15px; color: #fff; margin-left: 8px;">Master Aarav S. (Age 9)</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Diagnosis: Thalassemia Major</div>
+              <div style="font-size: 12px; color: #38bdf8; margin-top: 2px;">Transfusion Cycle: Every 18 Days</div>
+              <div style="font-size: 12px; color: #f59e0b; font-weight: 700; margin-top: 4px;">Next Due: In 4 Days (Nov 1, 2026)</div>
+            </div>
+
+            <div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600;">
+                Pre-Matched "Life Circle" Donors (Rotation Schedule):
+              </div>
+              <div class="donor-circle-avatars">
+                <div class="circle-avatar active-turn">
+                  <strong>Priya Menon</strong> (B+)<br>
+                  <span style="font-size: 10.5px;">✓ Ready (Turn for Nov 1)</span>
+                </div>
+                <div class="circle-avatar">
+                  <strong>Vikram M.</strong> (B+)<br>
+                  <span style="font-size: 10.5px;">Scheduled Nov 19</span>
+                </div>
+                <div class="circle-avatar">
+                  <strong>Dr. Ananya</strong> (B+)<br>
+                  <span style="font-size: 10.5px;">Scheduled Dec 07</span>
+                </div>
+                <div class="circle-avatar">
+                  <strong>Karthik R.</strong> (B+)<br>
+                  <span style="font-size: 10.5px;">Scheduled Dec 25</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <button class="btn-action success" onclick="alert('Notification sent to Priya Menon: Transfusion booked for Aarav on Nov 1 at Victoria Hospital.')">
+                Confirm Cycle Appointment
+              </button>
+            </div>
+          </div>
+
+          <!-- Standing Patient 2 -->
+          <div class="patient-circle-card" style="margin-top: 14px;">
+            <div>
+              <span class="badge-blood">O-</span>
+              <strong style="font-size: 15px; color: #fff; margin-left: 8px;">Mrs. Sunita D. (Age 54)</strong>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Oncology Chemotherapy Support</div>
+              <div style="font-size: 12px; color: #38bdf8; margin-top: 2px;">PRBC & Platelet Apheresis Required</div>
+              <div style="font-size: 12px; color: #10b981; font-weight: 700; margin-top: 4px;">Cycle Status: Transfused 8 days ago</div>
+            </div>
+
+            <div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600;">
+                Pre-Matched Universal Donor Pool (3 Members):
+              </div>
+              <div class="donor-circle-avatars">
+                <div class="circle-avatar">
+                  <strong>Rahul V.</strong> (O-)<br>
+                  <span style="font-size: 10.5px;">Eligible in 12 days</span>
+                </div>
+                <div class="circle-avatar active-turn">
+                  <strong>Sneha K.</strong> (O-)<br>
+                  <span style="font-size: 10.5px;">On Standby for next cycle</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <button class="btn-action" onclick="alert('Schedule details updated for Sunita D.')">
+                View Transfusion Log
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW 4: TRUST, HASH CHAIN AUDIT & DPDP ACT PRIVACY
+         ======================================================== -->
+    <div id="trust-security-tab" class="tab-content">
+      <div class="trust-view">
+        
+        <!-- Tamper-Evident SHA-256 Hash Chaining -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h2>
+              <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              Tamper-Evident SHA-256 Hash-Chained Audit Trail
+            </h2>
+            <span style="font-size: 11px; color: #10b981; font-weight: 700;">Cryptographically Verified</span>
+          </div>
+
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+            Every request creation, transfer authorization, and pathologist cross-match is cryptographically linked to the preceding block. Any tampering immediately invalidates the hash chain.
+          </p>
+
+          <div id="hashChainList">
+            <!-- Dynamically generated Hash Blocks -->
+          </div>
+        </div>
+
+        <!-- DPDP Act 2023 & QR Code Check-In -->
+        <div class="glass-panel" style="display: flex; flex-direction: column; gap: 18px;">
+          
+          <!-- One-Time QR Token -->
+          <div>
+            <div class="panel-header" style="margin-bottom: 10px;">
+              <h3>📱 QR-Based Donor Check-In</h3>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 14px; text-align: center;">
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+                When an alert is accepted, the donor receives an encrypted, single-use QR token. Hospital staff scan this upon arrival to close the loop without manual paperwork.
+              </p>
+              <div class="qr-box-wrapper">
+                <!-- SVG QR Code Mock -->
+                <svg width="140" height="140" viewBox="0 0 100 100" fill="#070d18">
+                  <path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z M70,0 h30 v30 h-30 z M80,10 h10 v10 h-10 z M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z M40,10 h10 v20 h-10 z M50,40 h20 v10 h-20 z M40,60 h10 v30 h-10 z M60,60 h30 v10 h-30 z M70,80 h20 v20 h-20 z"/>
+                </svg>
+              </div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #10b981; margin-top: 8px;">
+                TOKEN: BB-QR-8942-VERIFIED
+              </div>
+            </div>
+          </div>
+
+          <!-- DPDP Act 2023 Compliance Panel -->
+          <div>
+            <div class="panel-header" style="margin-bottom: 10px;">
+              <h3>🛡️ India DPDP Act 2023 Privacy Portal</h3>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px;">
+              <div>• <strong>Coarse Geohash Bucketing:</strong> Raw GPS coordinates are never stored. Location is hashed to ~1.2 km precision (`#tdr1v`).</div>
+              <div>• <strong>Contact Masking:</strong> Patient families and volunteers communicate exclusively through anonymized virtual relays.</div>
+              <div>• <strong>Right to Erasure:</strong> Donors can export or permanently delete their profiles and consent logs with one click.</div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <button class="btn-action" onclick="alert('Exporting DPDP-compliant GDPR/DPDP personal data archive (JSON)...')">
+                📥 Export My Data
+              </button>
+              <button class="btn-action" style="border-color: #ff3366; color: #ff3366;" onclick="confirm('Under DPDP Act 2023 Section 12, are you sure you want to permanently erase your voluntary donor profile from the registry?') && alert('Your records have been permanently expunged.')">
+                🗑️ Right to Erasure
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================================
+       MODAL: CREATE NEW EMERGENCY BLOOD REQUEST
+       ======================================================== -->
+  <div class="modal-overlay" id="requestModal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="color: #fff; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+          <span style="color: #ff3366;">🩸</span> File Emergency Blood Request
+        </h3>
+        <button style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer;" onclick="closeModal('requestModal')">&times;</button>
+      </div>
+
+      <form id="newRequestForm" onsubmit="handleNewRequest(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Blood Group</label>
+            <select id="modalBloodGroup" style="width: 100%; background: #070d18; border: 1px solid var(--border-color); color: #fff; padding: 8px 10px; border-radius: 6px;">
+              <option value="O-">O- (Universal)</option>
+              <option value="O+" selected>O+</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="Bombay (hh)">Bombay Phenotype (hh) Rare</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Component Required</label>
+            <select id="modalComponent" style="width: 100%; background: #070d18; border: 1px solid var(--border-color); color: #fff; padding: 8px 10px; border-radius: 6px;">
+              <option value="Whole Blood">Whole Blood</option>
+              <option value="PRBC (Packed Cells)" selected>PRBC (Packed Cells)</option>
+              <option value="Platelets (RDP/SDP)">Platelets (RDP/SDP)</option>
+              <option value="Plasma (FFP)">Fresh Frozen Plasma (FFP)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Hospital / Facility</label>
+          <select id="modalHospital" style="width: 100%; background: #070d18; border: 1px solid var(--border-color); color: #fff; padding: 8px 10px; border-radius: 6px;">
+            <option value="Apollo City Hospital & Transfusion Lab">Apollo City Hospital & Transfusion Lab</option>
+            <option value="Victoria Memorial Licensed Blood Bank">Victoria Memorial Licensed Blood Bank</option>
+            <option value="Fortis Lifeline Emergency Center">Fortis Lifeline Emergency Center</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Units Needed</label>
+            <input type="number" id="modalUnits" value="2" min="1" max="10" style="width: 100%; background: #070d18; border: 1px solid var(--border-color); color: #fff; padding: 8px 10px; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Urgency Priority</label>
+            <select id="modalUrgency" style="width: 100%; background: #070d18; border: 1px solid var(--border-color); color: #fff; padding: 8px 10px; border-radius: 6px;">
+              <option value="Critical (< 2 hrs)">Critical (&lt; 2 hrs)</option>
+              <option value="Urgent (Today)" selected>Urgent (Today)</option>
+              <option value="Scheduled (Within 48 hrs)">Scheduled (Within 48 hrs)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Patient Desk / Masked Contact</label>
+          <input type="text" id="modalContact" value="ICU Ward 3 (+91 94210 55120)" style="width: 100%; background: #070d18; border: 1px solid var(--border-color); color: #fff; padding: 8px 10px; border-radius: 6px;">
+        </div>
+
+        <button type="submit" class="btn-create-req" style="width: 100%; justify-content: center; padding: 11px;">
+          Execute Stock-First Pipeline Check
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // DATA STORES
+    // ==========================================
+    let requestsData = [
+      {
+        id: "REQ-801",
+        blood: "O-",
+        component: "PRBC",
+        units: 2,
+        urgency: "Critical (< 2 hrs)",
+        hospital: "Apollo City Hospital & Transfusion Lab",
+        status: "Approved",
+        approvedBy: "Dr. K. Sharma (Blood Bank Officer)",
+        approvedAt: "12 mins ago",
+        fulfillmentTier: "Inter-Hospital Transfer from Victoria Bank",
+        notes: "Cardiac surgery cross-match confirmed. Inter-hospital transfer en route."
+      },
+      {
+        id: "REQ-802",
+        blood: "B+",
+        component: "Platelets (RDP)",
+        units: 4,
+        urgency: "Critical (< 2 hrs)",
+        hospital: "Apollo City Hospital & Transfusion Lab",
+        status: "Matching & Alert Sent",
+        approvedBy: "Pending Verification",
+        approvedAt: null,
+        fulfillmentTier: "Tier 3: Smart Donor Mobilization",
+        notes: "Dengue shock syndrome; platelet count 18,000/mcL. 3 nearby eligible apheresis donors alerted."
+      }
+    ];
+
+    const smartDonors = [
+      {
+        name: "Priya Menon",
+        blood: "B+",
+        lastDonation: "135 days ago",
+        gender: "Female",
+        nbtcStatus: "Eligible (120d window met)",
+        trafficETA: "14 mins via Western Exp Highway",
+        reliability: "98% (6 past show-ups)",
+        isEligible: true
+      },
+      {
+        name: "Rahul Verma",
+        blood: "B+",
+        lastDonation: "42 days ago",
+        gender: "Male",
+        nbtcStatus: "Ineligible (48 days remaining in 90d window)",
+        trafficETA: "22 mins",
+        reliability: "92%",
+        isEligible: false
+      },
+      {
+        name: "Vikram Malhotra",
+        blood: "B+",
+        lastDonation: "98 days ago",
+        gender: "Male",
+        nbtcStatus: "Eligible (90d window met)",
+        trafficETA: "18 mins via Ring Road",
+        reliability: "95%",
+        isEligible: true
+      }
+    ];
+
+    const hashChainData = [
+      {
+        block: 1,
+        prevHash: "00000000000000000000000000000000",
+        hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        event: "GENESIS: BloodBridge 2.0 Network initialized with e-RaktKosh Root Registry"
+      },
+      {
+        block: 2,
+        prevHash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        hash: "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        event: "REQUEST #REQ-801 created: 2 Units O- PRBC at Apollo City Hospital"
+      },
+      {
+        block: 3,
+        prevHash: "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        hash: "a819b1654a938c0f0e0d6c4d7e3a2b1f8c7d6e5a4b3c2d1e0f9a8b7c6d5e4f3a",
+        event: "TRANSFER_AUTH: Victoria Memorial approved surplus dispatch of 2 Units O- PRBC"
+      },
+      {
+        block: 4,
+        prevHash: "a819b1654a938c0f0e0d6c4d7e3a2b1f8c7d6e5a4b3c2d1e0f9a8b7c6d5e4f3a",
+        hash: "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+        event: "CROSSMATCH_VERIFIED: Dr. K. Sharma validated cross-match & QR check-in recorded"
+      }
+    ];
+
+    // ==========================================
+    // RENDER FUNCTIONS
+    // ==========================================
+    function renderRequests() {
+      const container = document.getElementById('requestsListContainer');
+      container.innerHTML = '';
+
+      requestsData.forEach(r => {
+        const isAppr = r.status === 'Approved';
+        const card = document.createElement('div');
+        card.className = `req-card ${isAppr ? 'approved' : 'critical'}`;
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge-blood">${r.blood}</span>
+              <strong style="color: #fff; font-size: 14.5px;">${r.units} Units ${r.component}</strong>
+            </div>
+            <span class="badge-status ${isAppr ? 'approved' : 'critical'}">${r.status}</span>
+          </div>
+
+          <div style="font-size: 12.5px; color: #fff; font-weight: 600;">
+            🏥 ${r.hospital}
+          </div>
+
+          <div style="background: rgba(0,0,0,0.25); border-radius: 6px; padding: 8px 10px; font-size: 11.5px; color: #cbd5e1;">
+            <div><strong>Fulfillment Layer:</strong> <span style="color: #00d2d3;">${r.fulfillmentTier}</span></div>
+            <div style="margin-top: 2px;"><strong>Note:</strong> ${r.notes}</div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+            ${isAppr 
+              ? `<span style="font-size: 11.5px; color: #10b981;">✓ ${r.approvedBy} (${r.approvedAt})</span>`
+              : `<button class="btn-action success" style="width: 100%;" onclick="partnerApproveRequest('${r.id}')">✓ Pathologist Clinical Verify</button>`
+            }
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderSmartDonors() {
+      const container = document.getElementById('smartDonorsContainer');
+      container.innerHTML = '';
+
+      smartDonors.forEach(d => {
+        const div = document.createElement('div');
+        div.className = `donor-smart-item ${d.isEligible ? 'eligible' : 'ineligible'}`;
+        div.innerHTML = `
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <strong style="color: #fff; font-size: 13.5px;">${d.name}</strong>
+              <span class="badge-blood" style="font-size: 11px; padding: 2px 6px;">${d.blood}</span>
+              <span class="score-badge">${d.reliability} Reliability</span>
+            </div>
+            <div style="font-size: 11.5px; color: ${d.isEligible ? '#10b981' : '#f87171'}; margin-top: 3px;">
+              NBTC Rule: ${d.nbtcStatus} (Last donated: ${d.lastDonation})
+            </div>
+            <div style="font-size: 11.5px; color: #94a3b8; margin-top: 2px;">
+              🚗 Real Traffic ETA: <strong>${d.trafficETA}</strong>
+            </div>
+          </div>
+
+          <div>
+            ${d.isEligible 
+              ? `<button class="btn-action primary" onclick="alert('Priority alert sent to ${d.name}. Single-use QR token dispatched.')">Send Alert</button>`
+              : `<span style="font-size: 11px; color: #94a3b8;">Locked by NBTC rule</span>`
+            }
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderHashChain() {
+      const container = document.getElementById('hashChainList');
+      container.innerHTML = '';
+      hashChainData.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'hash-block';
+        div.innerHTML = `
+          <div style="color: #fff; font-weight: 700; margin-bottom: 2px;">BLOCK #${b.block}: ${b.event}</div>
+          <div style="color: #94a3b8; font-size: 10.5px;">PREV: <span style="color: #64748b;">${b.prevHash}</span></div>
+          <div style="color: #00d2d3; font-size: 10.5px;">HASH: ${b.hash}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // ==========================================
+    // INTER-HOSPITAL TRANSFER SIMULATION
+    // ==========================================
+    function initiateHospitalTransfer(hospFrom, hospTo, blood, component) {
+      const conf = confirm(
+        `[Inter-Hospital Surplus Transfer Protocol]\n\n` +
+        `Transferring 2 Units of ${blood} ${component} from Victoria Memorial Licensed Blood Bank (Surplus) to Apollo City Hospital.\n\n` +
+        `• Direct transfer arranged before donor summons.\n` +
+        `• Temperature-monitored cold chain courier dispatched.\n\n` +
+        `Click OK to authorize transfer.`
+      );
+
+      if (conf) {
+        addHashBlock(`TRANSFER: 2 units ${blood} ${component} transferred between Victoria & Apollo`);
+        alert(`Success! Transfer approved. Courier transit ETA: 12 mins. No volunteer donors needed to be mobilized!`);
+      }
+    }
+
+    function triggerProactiveMobilization() {
+      alert(
+        `[Predictive Shortage Mobilization Triggered]\n\n` +
+        `Based on the 4-day Dengue Platelet Forecast:\n` +
+        `• 12 eligible apheresis donors in Sector 4 sent proactive calendar reservation invites.\n` +
+        `• Apollo & Victoria blood banks reserved dedicated apheresis slots.\n` +
+        `Emergency prevented before shortage hit zero!`
+      );
+    }
+
+    function triggerRareBloodSearch() {
+      alert(
+        `[Cross-City Rare Phenotype Mode Activated]\n\n` +
+        `Searching for Bombay Blood Group (hh) / Rh-Null:\n` +
+        `• Expanded search radius across Mumbai, Bengaluru, and Pune registries.\n` +
+        `• Contacted 4 registered hh donors via Indian Red Cross cross-city database.\n` +
+        `• Cold-chain rail/air transport alert initialized.`
+      );
+    }
+
+    function addHashBlock(eventName) {
+      const last = hashChainData[hashChainData.length - 1];
+      const newBlock = {
+        block: last.block + 1,
+        prevHash: last.hash,
+        hash: Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+        event: eventName
+      };
+      hashChainData.push(newBlock);
+      renderHashChain();
+    }
+
+    function partnerApproveRequest(reqId) {
+      const req = requestsData.find(r => r.id === reqId);
+      if (req) {
+        req.status = 'Approved';
+        req.approvedBy = 'Dr. S. Nair (Clinical Pathologist)';
+        req.approvedAt = 'Just now';
+        addHashBlock(`CLINICAL_VERIFIED: ${reqId} for ${req.blood} cleared by Dr. S. Nair`);
+        renderRequests();
+        alert(`Request ${reqId} Approved and Verified. QR Check-In Token generated for donor.`);
+      }
+    }
+
+    // ==========================================
+    // WHATSAPP BOT SIMULATOR
+    // ==========================================
+    function openWhatsAppModal() {
+      switchTab('smart-match-tab');
+      document.getElementById('waUserMsg').focus();
+    }
+
+    function sendWhatsAppTestMsg() {
+      const input = document.getElementById('waUserMsg');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chat = document.getElementById('waChatBody');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'wa-msg out';
+      userMsg.innerText = text;
+      chat.appendChild(userMsg);
+      input.value = '';
+
+      setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'wa-msg in';
+        botMsg.innerHTML = `
+          🤖 <strong>BloodBridge AI Response:</strong><br>
+          Got it! Request received from your WhatsApp. Checking local hospital surplus in our network first. If no component surplus is found, nearby verified donors will receive an SMS alert with response code 1.
+        `;
+        chat.appendChild(botMsg);
+        chat.scrollTop = chat.scrollHeight;
+      }, 700);
+    }
+
+    // ==========================================
+    // 30-SECOND HACKATHON DEMO WALKTHROUGH
+    // ==========================================
+    function start30SecHackathonDemo() {
+      alert(
+        `🎬 [HACKATHON DEMO STORY: 30-SECOND WALKTHROUGH]\n\n` +
+        `SCENARIO: Highway emergency trauma at 8:00 PM. Patient in shock at Apollo City Hospital. 2 units of O-Negative needed immediately.\n\n` +
+        `THE OLD WAY: Attendant posts on WhatsApp. 50 calls made, wrong blood types, 3 hours wasted.\n\n` +
+        `THE BLOODBRIDGE 2.0 WAY:\n` +
+        `1. Checks Apollo stock (O- is 0).\n` +
+        `2. Instantly detects 2 Units surplus at Victoria Memorial (1.8 km away).\n` +
+        `3. Authorizes Inter-Hospital Transfer in 8 seconds!\n` +
+        `4. Spares volunteer donors, preserves platelets, logs SHA-256 hash.\n\n` +
+        `Watch the live platform demonstrate this now!`
+      );
+      switchTab('stock-radar-tab');
+    }
+
+    // ==========================================
+    // MODALS & TABS
+    // ==========================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+
+      if (event && event.currentTarget && event.currentTarget.classList) {
+        event.currentTarget.classList.add('active');
+      }
+    }
+
+    function openNewRequestModal() {
+      document.getElementById('requestModal').classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function handleNewRequest(e) {
+      e.preventDefault();
+      const blood = document.getElementById('modalBloodGroup').value;
+      const comp = document.getElementById('modalComponent').value;
+      const hosp = document.getElementById('modalHospital').value;
+      const units = document.getElementById('modalUnits').value;
+      const urgency = document.getElementById('modalUrgency').value;
+
+      const newReq = {
+        id: "REQ-" + Math.floor(810 + Math.random() * 90),
+        blood: blood,
+        component: comp,
+        units: units,
+        urgency: urgency,
+        hospital: hosp,
+        status: "Checking Surplus & Matching",
+        approvedBy: "Pending Verification",
+        approvedAt: null,
+        fulfillmentTier: "Tier 1: Checking Inter-Hospital Surplus",
+        notes: `Urgent requirement for ${units} units of ${blood} ${comp}. Pipeline initialized.`
+      };
+
+      requestsData.unshift(newReq);
+      addHashBlock(`NEW_REQUEST: ${newReq.id} for ${units} units ${blood} at ${hosp}`);
+      closeModal('requestModal');
+      renderRequests();
+
+      alert(`BloodBridge Protocol Executed for Request ${newReq.id}:\n1. Checking hospital network stock...\n2. Evaluating inter-hospital surplus...\n3. Enforcing NBTC eligibility on standby donor pool.`);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderRequests();
+      renderSmartDonors();
+      renderHashChain();
+    });
+  </script>
+</body>
+</html>
